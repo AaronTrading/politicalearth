@@ -6,23 +6,32 @@ import React, { useEffect, useState } from 'react';
 
 const Header: React.FC = () => {
   const pathname = usePathname();
-  const [gameDate, setGameDate] = useState('2077');
+  const [gameDate, setGameDate] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     const fetchGameDate = async () => {
       try {
         const response = await fetch('/api/game-date');
         const data = await response.json();
         if (data && data.date) {
           setGameDate(data.date);
+        } else {
+          setGameDate('2077');
         }
       } catch (error) {
         console.error('Erreur lors du chargement de la date:', error);
+        setGameDate('2077');
       }
     };
 
     fetchGameDate();
   }, []);
+
+  // Prevent hydration mismatch by not rendering dynamic content until mounted
+  const displayDate = mounted ? gameDate || '2077' : '2077';
 
   const navLinks = [
     { href: '/', label: 'Accueil' },
@@ -131,7 +140,7 @@ const Header: React.FC = () => {
               color: '#1f2937',
             }}
           >
-            📅 {gameDate}
+            📅 {displayDate}
           </span>
         </div>
       </div>
