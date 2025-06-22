@@ -37,9 +37,20 @@ interface GameDate {
   isActive: boolean;
 }
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  image?: string;
+  nation?: string;
+  pib?: number;
+  createdAt: string;
+  emailVerified: boolean;
+}
+
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<
-    'military' | 'economic' | 'news' | 'date'
+    'military' | 'economic' | 'news' | 'date' | 'users'
   >('military');
   const [militaryRankings, setMilitaryRankings] = useState<MilitaryRanking[]>(
     []
@@ -48,6 +59,7 @@ export default function AdminPanel() {
     []
   );
   const [news, setNews] = useState<News[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [gameDate, setGameDate] = useState<GameDate | null>(null);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -59,21 +71,25 @@ export default function AdminPanel() {
 
   const fetchData = async () => {
     try {
-      const [militaryRes, economicRes, newsRes, dateRes] = await Promise.all([
-        fetch('/api/military-rankings'),
-        fetch('/api/economic-rankings'),
-        fetch('/api/news'),
-        fetch('/api/game-date'),
-      ]);
+      const [militaryRes, economicRes, newsRes, dateRes, usersRes] =
+        await Promise.all([
+          fetch('/api/military-rankings'),
+          fetch('/api/economic-rankings'),
+          fetch('/api/news'),
+          fetch('/api/game-date'),
+          fetch('/api/users'),
+        ]);
 
       const military = await militaryRes.json();
       const economic = await economicRes.json();
       const newsData = await newsRes.json();
       const dateData = await dateRes.json();
+      const usersData = await usersRes.json();
 
       setMilitaryRankings(military);
       setEconomicRankings(economic);
       setNews(newsData);
+      setUsers(usersData);
       setGameDate(dateData);
       setLoading(false);
     } catch (error) {
@@ -223,6 +239,7 @@ export default function AdminPanel() {
             { key: 'military', label: '⚔️ Classement Militaire' },
             { key: 'economic', label: '💰 Classement Économique' },
             { key: 'news', label: '📰 Actualités' },
+            { key: 'users', label: '👥 Utilisateurs' },
           ].map((tab) => (
             <button
               key={tab.key}
@@ -274,6 +291,9 @@ export default function AdminPanel() {
             updateNews={updateNews}
             createNews={createNews}
           />
+        )}
+        {activeTab === 'users' && (
+          <UserManagement users={users} refreshData={fetchData} />
         )}
       </div>
     </div>
@@ -1250,6 +1270,311 @@ function NewsManagement({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// User Management Component
+function UserManagement({
+  users,
+  refreshData,
+}: {
+  users: User[];
+  refreshData: () => void;
+}) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Partial<User>>({});
+
+  const handleEdit = (user: User) => {
+    setEditingId(user.id);
+    setEditData({ nation: user.nation || '', pib: user.pib || 0 });
+  };
+
+  const handleSave = async () => {
+    if (editingId) {
+      try {
+        const response = await fetch(`/api/users/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nation: editData.nation,
+            pib: editData.pib,
+          }),
+        });
+
+        if (response.ok) {
+          refreshData();
+          setEditingId(null);
+          setEditData({});
+          alert('Utilisateur mis à jour avec succès!');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour:', error);
+        alert('Erreur lors de la mise à jour');
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditData({});
+  };
+
+  return (
+    <div
+      style={{
+        backgroundColor: 'white',
+        padding: '30px',
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <h2 style={{ fontSize: '24px', marginBottom: '20px', color: '#333' }}>
+        👥 Gestion des Utilisateurs
+      </h2>
+
+      <div style={{ overflowX: 'auto' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '14px',
+          }}
+        >
+          <thead>
+            <tr style={{ backgroundColor: '#f8f9fa' }}>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                Avatar
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                Nom
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                Email
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                Nation
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                PIB (M€)
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                Inscription
+              </th>
+              <th
+                style={{
+                  padding: '12px',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                }}
+              >
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt="Avatar"
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        backgroundColor: '#007bff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </td>
+
+                {editingId === user.id ? (
+                  <>
+                    <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                      {user.name}
+                    </td>
+                    <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                      {user.email}
+                    </td>
+                    <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                      <input
+                        type="text"
+                        value={editData.nation || ''}
+                        onChange={(e) =>
+                          setEditData({ ...editData, nation: e.target.value })
+                        }
+                        placeholder="Ex: France"
+                        style={{ width: '120px', padding: '4px' }}
+                      />
+                    </td>
+                    <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                      <input
+                        type="number"
+                        value={editData.pib || ''}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            pib: parseFloat(e.target.value),
+                          })
+                        }
+                        placeholder="Ex: 2500"
+                        style={{ width: '80px', padding: '4px' }}
+                      />
+                    </td>
+                    <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                      {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td style={{ padding: '8px', border: '1px solid #ddd' }}>
+                      <button
+                        onClick={handleSave}
+                        style={{
+                          marginRight: '5px',
+                          padding: '4px 8px',
+                          backgroundColor: '#28a745',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        💾
+                      </button>
+                      <button
+                        onClick={handleCancel}
+                        style={{
+                          padding: '4px 8px',
+                          backgroundColor: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ❌
+                      </button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                      {user.name}
+                    </td>
+                    <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                      {user.email}
+                    </td>
+                    <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                      {user.nation ? (
+                        <span style={{ color: '#28a745', fontWeight: 'bold' }}>
+                          {user.nation}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#dc3545', fontStyle: 'italic' }}>
+                          Non définie
+                        </span>
+                      )}
+                    </td>
+                    <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                      {user.pib ? (
+                        <span style={{ color: '#28a745', fontWeight: 'bold' }}>
+                          {user.pib.toLocaleString()}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#dc3545', fontStyle: 'italic' }}>
+                          Non défini
+                        </span>
+                      )}
+                    </td>
+                    <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                      {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td style={{ padding: '12px', border: '1px solid #ddd' }}>
+                      <button
+                        onClick={() => handleEdit(user)}
+                        style={{
+                          padding: '6px 12px',
+                          backgroundColor: '#007bff',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ✏️ Éditer
+                      </button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {users.length === 0 && (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '40px',
+            color: '#6c757d',
+          }}
+        >
+          <p>Aucun utilisateur inscrit pour le moment.</p>
+        </div>
+      )}
     </div>
   );
 }
