@@ -7,7 +7,7 @@ export async function GET() {
       orderBy: { rank: 'asc' },
     });
     return NextResponse.json(rankings);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch military rankings' },
       { status: 500 }

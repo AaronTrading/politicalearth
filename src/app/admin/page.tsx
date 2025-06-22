@@ -218,7 +218,11 @@ export default function AdminPage() {
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as any)}
+                onClick={() =>
+                  setActiveTab(
+                    tab.key as 'military' | 'economic' | 'news' | 'date'
+                  )
+                }
                 style={{
                   padding: '12px 20px',
                   border: 'none',
@@ -614,7 +618,7 @@ export default function AdminPage() {
                     cursor: 'pointer',
                   }}
                 >
-                  Créer l'actualité
+                  Créer l&apos;actualité
                 </button>
               </div>
             </div>
