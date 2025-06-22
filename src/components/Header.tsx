@@ -1,96 +1,8 @@
 'use client';
 
-import { signIn, signOut, useSession } from '@/lib/auth-client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-
-// Composant AuthButton
-const AuthButton: React.FC = () => {
-  const { data: session, isPending } = useSession();
-
-  if (isPending) {
-    return (
-      <div
-        style={{
-          padding: '0.5rem 1rem',
-          backgroundColor: '#f3f4f6',
-          borderRadius: '0.5rem',
-          fontSize: '0.9rem',
-          color: '#6b7280',
-        }}
-      >
-        Chargement...
-      </div>
-    );
-  }
-
-  if (session) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Link
-          href="/dashboard"
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: '#10b981',
-            color: 'white',
-            borderRadius: '0.5rem',
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          Dashboard
-        </Link>
-        <button
-          onClick={() => signOut()}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: '#ef4444',
-            color: 'white',
-            border: 'none',
-            borderRadius: '0.5rem',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          Déconnexion
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <button
-      onClick={() => signIn.social({ provider: 'discord' })}
-      style={{
-        padding: '0.5rem 1rem',
-        backgroundColor: '#5865f2',
-        color: 'white',
-        border: 'none',
-        borderRadius: '0.5rem',
-        fontSize: '0.9rem',
-        fontWeight: '600',
-        cursor: 'pointer',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.5rem',
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = '#4752c4';
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = '#5865f2';
-      }}
-    >
-      🎮 Connexion
-    </button>
-  );
-};
 
 const Header: React.FC = () => {
   const pathname = usePathname();
@@ -210,29 +122,26 @@ const Header: React.FC = () => {
           ))}
         </nav>
 
-        {/* Auth & Date */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <AuthButton />
-          <div
+        {/* Date */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#f3f4f6',
+            padding: '0.5rem 1rem',
+            borderRadius: '0.5rem',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <span
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: '#f3f4f6',
-              padding: '0.5rem 1rem',
-              borderRadius: '0.5rem',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+              fontSize: '0.9rem',
+              fontWeight: 'bold',
+              color: '#1f2937',
             }}
           >
-            <span
-              style={{
-                fontSize: '0.9rem',
-                fontWeight: 'bold',
-                color: '#1f2937',
-              }}
-            >
-              📅 {displayDate}
-            </span>
-          </div>
+            📅 {displayDate}
+          </span>
         </div>
       </div>
     </header>
