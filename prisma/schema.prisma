@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model MilitaryRanking {
+  id      Int    @id @default(autoincrement())
+  rank    Int    @unique
+  country String
+  flag    String
+  power   Float
+  budget  String
+  forces  String
+
+  @@map("military_rankings")
+}
+
+model EconomicRanking {
+  id      Int    @id @default(autoincrement())
+  rank    Int    @unique
+  country String
+  flag    String
+  gdp     String
+  growth  String
+  trade   String
+
+  @@map("economic_rankings")
+}
+
+model News {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  category  String
+  date      String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("news")
+}
+
+model GameDate {
+  id       Int     @id @default(autoincrement())
+  date     String
+  isActive Boolean @default(true)
+
+  @@map("game_date")
+}

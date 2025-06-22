@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-white text-gray-800;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  a {
+    @apply text-inherit;
+    text-decoration: none !important;
+  }
+
+  a:hover {
+    text-decoration: none !important;
+  }
+
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  table.wiki-table {
+    border-collapse: collapse !important;
+    border: 2px solid #a2a9b1 !important;
+    background-color: #f8f9fa !important;
+    width: 100% !important;
+  }
+
+  table.wiki-table th,
+  table.wiki-table td {
+    border: 1px solid #a2a9b1 !important;
+    padding: 6px 8px !important;
+    vertical-align: top !important;
+  }
+
+  table.wiki-table th {
+    background-color: #eaecf0 !important;
+    font-weight: bold !important;
+    text-align: left !important;
+  }
+
+  table.wiki-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa !important;
+  }
+
+  table.wiki-table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+  }
+
+  table.wiki-table tbody tr:hover {
+    background-color: #eaf3ff !important;
+  }
+}
+
+@layer utilities {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+}
