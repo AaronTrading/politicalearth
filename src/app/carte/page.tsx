@@ -1,8 +1,19 @@
-import { Flag, Globe, Users } from 'lucide-react';
+import { env } from "@/lib/env";
+import type { Metadata } from "next";
+
+import { Flag, Globe, Users } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: `Carte | ${env.NEXT_PUBLIC_APP_NAME}`,
+  description: `Carte du serveur géopolitique ${env.NEXT_PUBLIC_APP_NAME}.`,
+  alternates: {
+    canonical: `${env.NEXT_PUBLIC_BASE_URL}/carte`,
+  },
+};
 
 export default function CartePage() {
   return (
-    <section>
+    <main>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-4xl font-bold">Carte du Monde</h1>
         <div className="flex gap-6">
@@ -26,6 +37,6 @@ export default function CartePage() {
           <p>Utilisez le zoom et le glisser-déposer pour explorer.</p>
         </div>
       </div>
-    </section>
+    </main>
   );
 }

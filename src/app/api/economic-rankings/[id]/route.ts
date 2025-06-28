@@ -1,5 +1,11 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '../../../../lib/prisma';
+import { NextResponse } from "next/server";
+import { prisma } from "../../../../lib/prisma";
+
+import {
+  BadRequestError,
+  handleApiError,
+  NotFoundError,
+} from "@/utils/api/handle-api-error";
 
 export async function PUT(
   request: Request,
@@ -9,16 +15,25 @@ export async function PUT(
     const { id } = await context.params;
     const body = await request.json();
 
+    if (!id) {
+      throw new BadRequestError("Invalid ID");
+    }
+
+    if (!body.rank) {
+      throw new BadRequestError("Rank is required");
+    }
+
     const updatedRanking = await prisma.economicRanking.update({
       where: { id: parseInt(id) },
       data: body,
     });
 
+    if (!updatedRanking) {
+      throw new NotFoundError("Economic ranking not found");
+    }
+
     return NextResponse.json(updatedRanking);
-  } catch {
-    return NextResponse.json(
-      { error: 'Failed to update economic ranking' },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleApiError(error);
   }
 }

@@ -1,17 +1,21 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import { NextResponse } from "next/server";
+import { prisma } from "../../../lib/prisma";
+
+import { handleApiError, NotFoundError } from "@/utils/api/handle-api-error";
 
 export async function GET() {
   try {
     const news = await prisma.news.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
+
+    if (!news) {
+      throw new NotFoundError("News not found");
+    }
+
     return NextResponse.json(news);
-  } catch {
-    return NextResponse.json(
-      { error: 'Failed to fetch news' },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleApiError(error);
   }
 }
 
@@ -23,11 +27,12 @@ export async function POST(request: Request) {
       data: body,
     });
 
+    if (!newArticle) {
+      throw new NotFoundError("News not created");
+    }
+
     return NextResponse.json(newArticle);
-  } catch {
-    return NextResponse.json(
-      { error: 'Failed to create news article' },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    return handleApiError(error);
   }
 }

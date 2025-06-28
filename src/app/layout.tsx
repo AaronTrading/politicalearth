@@ -1,14 +1,9 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import Header from '../components/Header';
-import './globals.css';
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+import { Inter } from "next/font/google";
+import { Header } from "../components/header";
 
-export const metadata: Metadata = {
-  title: 'Political Earth - Serveur Géopolitique',
-  description: 'Le site officiel du serveur géopolitique Political Earth.',
-};
+const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -19,7 +14,7 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <body className={inter.className}>
         <Header />
-        <main>{children}</main>
+        {children}
       </body>
     </html>
   );
