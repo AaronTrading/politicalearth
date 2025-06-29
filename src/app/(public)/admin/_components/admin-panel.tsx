@@ -35,16 +35,14 @@ export default function AdminPanel({
       <AdminTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
-        {activeTab === "date" && (
-          <DateManagement initialGameDate={initialGameDate} />
-        )}
+        {activeTab === "date" && <DateManagement gameDate={initialGameDate} />}
         {activeTab === "military" && (
-          <MilitaryManagement initialRankings={initialMilitaryRankings} />
+          <MilitaryManagement rankings={initialMilitaryRankings} />
         )}
         {activeTab === "economic" && (
-          <EconomicManagement initialRankings={initialEconomicRankings} />
+          <EconomicManagement rankings={initialEconomicRankings} />
         )}
-        {activeTab === "news" && <NewsManagement initialNews={initialNews} />}
+        {activeTab === "news" && <NewsManagement news={initialNews} />}
       </div>
     </div>
   );

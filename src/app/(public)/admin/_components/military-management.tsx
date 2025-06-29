@@ -5,14 +5,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface MilitaryManagementProps {
-  initialRankings: MilitaryRanking[];
+  rankings: MilitaryRanking[];
 }
 
 export default function MilitaryManagement({
-  initialRankings,
+  rankings,
 }: MilitaryManagementProps) {
   const router = useRouter();
-  const [rankings, setRankings] = useState<MilitaryRanking[]>(initialRankings);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<MilitaryRanking>>({});
 
@@ -25,15 +24,10 @@ export default function MilitaryManagement({
       });
 
       if (response.ok) {
-        setRankings((prev) =>
-          prev.map((ranking) =>
-            ranking.id === id ? { ...ranking, ...data } : ranking
-          )
-        );
         alert("Classement militaire mis à jour!");
         router.refresh();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Erreur lors de la mise à jour:", error);
       alert("Erreur lors de la mise à jour");
     }

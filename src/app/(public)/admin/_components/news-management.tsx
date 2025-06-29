@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface NewsManagementProps {
-  initialNews: News[];
+  news: News[];
 }
 
-export default function NewsManagement({ initialNews }: NewsManagementProps) {
+export default function NewsManagement({ news }: NewsManagementProps) {
   const router = useRouter();
-  const [news, setNews] = useState<News[]>(initialNews);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<News>>({});
   const [isCreating, setIsCreating] = useState(false);
@@ -31,11 +30,6 @@ export default function NewsManagement({ initialNews }: NewsManagementProps) {
       });
 
       if (response.ok) {
-        setNews((prev) =>
-          prev.map((article) =>
-            article.id === id ? { ...article, ...data } : article
-          )
-        );
         alert("Actualité mise à jour!");
         router.refresh();
       }
@@ -54,8 +48,6 @@ export default function NewsManagement({ initialNews }: NewsManagementProps) {
       });
 
       if (response.ok) {
-        const newArticle = await response.json();
-        setNews((prev) => [newArticle, ...prev]);
         alert("Actualité créée!");
         router.refresh();
       }

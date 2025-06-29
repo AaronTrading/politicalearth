@@ -5,14 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface DateManagementProps {
-  initialGameDate: GameDate | null;
+  gameDate: GameDate | null;
 }
 
-export default function DateManagement({
-  initialGameDate,
-}: DateManagementProps) {
+export default function DateManagement({ gameDate }: DateManagementProps) {
   const router = useRouter();
-  const [gameDate, setGameDate] = useState<GameDate | null>(initialGameDate);
   const [newDate, setNewDate] = useState(gameDate?.date || "");
 
   const updateGameDate = async (newDateValue: string) => {
@@ -24,8 +21,6 @@ export default function DateManagement({
       });
 
       if (response.ok) {
-        const updatedDate = await response.json();
-        setGameDate(updatedDate);
         alert("Date mise à jour avec succès!");
         router.refresh();
       }
@@ -84,7 +79,8 @@ export default function DateManagement({
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900"
           />
           <p className="text-sm text-gray-500 mt-1">
-            Format libre (ex: "15 Janvier 2157", "An 2157", etc.)
+            Format libre (ex: &quot;15 Janvier 2157&quot;, &quot;An 2157&quot;,
+            etc.)
           </p>
         </div>
 

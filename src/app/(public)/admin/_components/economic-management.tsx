@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface EconomicManagementProps {
-  initialRankings: EconomicRanking[];
+  rankings: EconomicRanking[];
 }
 
 export default function EconomicManagement({
-  initialRankings,
+  rankings,
 }: EconomicManagementProps) {
   const router = useRouter();
-  const [rankings, setRankings] = useState<EconomicRanking[]>(initialRankings);
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<EconomicRanking>>({});
 
@@ -25,11 +25,6 @@ export default function EconomicManagement({
       });
 
       if (response.ok) {
-        setRankings((prev) =>
-          prev.map((ranking) =>
-            ranking.id === id ? { ...ranking, ...data } : ranking
-          )
-        );
         alert("Classement économique mis à jour!");
         router.refresh();
       }
