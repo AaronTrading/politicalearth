@@ -7,6 +7,7 @@ import type {
   News,
 } from "@/lib/types";
 import { useState } from "react";
+
 import AdminTabs from "./admin-tabs";
 import DateManagement from "./date-management";
 import EconomicManagement from "./economic-management";
@@ -20,12 +21,12 @@ interface AdminPanelProps {
   initialGameDate: GameDate | null;
 }
 
-export default function AdminPanel({
+export const AdminPanel = ({
   initialMilitaryRankings,
   initialEconomicRankings,
   initialNews,
   initialGameDate,
-}: AdminPanelProps) {
+}: AdminPanelProps) => {
   const [activeTab, setActiveTab] = useState<
     "military" | "economic" | "news" | "date"
   >("date");
@@ -46,4 +47,4 @@ export default function AdminPanel({
       </div>
     </div>
   );
-}
+};

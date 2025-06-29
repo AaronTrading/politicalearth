@@ -22,8 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-600 shadow",
       outline:
         "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-600",
-      ghost:
-        "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
+      ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
     };
 
     const sizes = {
@@ -46,4 +45,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = "Button";
 
-export default Button;
+export { Button };

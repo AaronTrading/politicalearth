@@ -10,13 +10,13 @@ interface NewsCardProps {
   index: number;
 }
 
-export default function NewsCard({
+export const NewsCard = ({
   title,
   category,
   date,
   content,
   index,
-}: NewsCardProps) {
+}: NewsCardProps) => {
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -44,4 +44,4 @@ export default function NewsCard({
       <p className="text-gray-700 leading-relaxed">{content}</p>
     </motion.article>
   );
-}
+};

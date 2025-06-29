@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { GameDateDisplay } from "./game-date-display";
-import MobileNav from "./mobile-nav";
+import { MobileNav } from "./mobile-nav";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -10,7 +10,7 @@ const navLinks = [
   { href: "/admin", label: "🔧 Admin" },
 ];
 
-function Header() {
+export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b-4 border-gray-300 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4">
@@ -57,6 +57,4 @@ function Header() {
       </div>
     </header>
   );
-}
-
-export default Header;
+};

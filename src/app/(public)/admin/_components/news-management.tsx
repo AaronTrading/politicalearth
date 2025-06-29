@@ -3,6 +3,7 @@
 import type { News } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "../../_components/toast";
 
 interface NewsManagementProps {
   news: News[];
@@ -10,6 +11,7 @@ interface NewsManagementProps {
 
 export default function NewsManagement({ news }: NewsManagementProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<News>>({});
   const [isCreating, setIsCreating] = useState(false);
@@ -30,12 +32,12 @@ export default function NewsManagement({ news }: NewsManagementProps) {
       });
 
       if (response.ok) {
-        alert("Actualité mise à jour!");
+        showToast("Actualité mise à jour!", "success");
         router.refresh();
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
-      alert("Erreur lors de la mise à jour");
+      showToast("Erreur lors de la mise à jour", "error");
     }
   };
 
@@ -48,12 +50,12 @@ export default function NewsManagement({ news }: NewsManagementProps) {
       });
 
       if (response.ok) {
-        alert("Actualité créée!");
+        showToast("Actualité créée!", "success");
         router.refresh();
       }
     } catch (error) {
       console.error("Erreur lors de la création:", error);
-      alert("Erreur lors de la création");
+      showToast("Erreur lors de la création", "error");
     }
   };
 

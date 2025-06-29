@@ -18,12 +18,12 @@ interface RankingTableProps {
   }>;
 }
 
-export default function RankingTable({
+export const RankingTable = ({
   title,
   icon,
   data,
   columns,
-}: RankingTableProps) {
+}: RankingTableProps) => {
   return (
     <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
       {/* Header */}
@@ -93,4 +93,4 @@ export default function RankingTable({
       </div>
     </div>
   );
-}
+};

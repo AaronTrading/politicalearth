@@ -1,8 +1,8 @@
 import { env } from "@/lib/env";
 import type { Metadata } from "next";
 import { prisma } from "../../../lib/prisma";
-import PageHeader from "../_components/page-header";
-import RankingTable from "../_components/ranking-table";
+import { PageHeader } from "../_components/page-header";
+import { RankingTable } from "./_components/ranking-table";
 
 export const metadata: Metadata = {
   title: `Classement | ${env.NEXT_PUBLIC_APP_NAME}`,

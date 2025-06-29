@@ -1,8 +1,9 @@
 import { env } from "@/lib/env";
 import type { Metadata } from "next";
 import { prisma } from "../../../lib/prisma";
-import NewsCard from "../_components/news-card";
-import PageHeader from "../_components/page-header";
+
+import { NewsCard } from "./_components/news-card";
+import { PageHeader } from "../_components/page-header";
 
 export const metadata: Metadata = {
   title: `Actualités | ${env.NEXT_PUBLIC_APP_NAME}`,

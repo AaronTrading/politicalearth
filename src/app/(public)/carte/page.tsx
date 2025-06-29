@@ -2,7 +2,7 @@ import { env } from "@/lib/env";
 import { Flag, Globe, Users } from "lucide-react";
 import type { Metadata } from "next";
 
-import PageHeader from "../_components/page-header";
+import { PageHeader } from "../_components/page-header";
 
 export const metadata: Metadata = {
   title: `Carte | ${env.NEXT_PUBLIC_APP_NAME}`,

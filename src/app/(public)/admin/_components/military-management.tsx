@@ -3,6 +3,7 @@
 import type { MilitaryRanking } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "../../_components/toast";
 
 interface MilitaryManagementProps {
   rankings: MilitaryRanking[];
@@ -12,6 +13,7 @@ export default function MilitaryManagement({
   rankings,
 }: MilitaryManagementProps) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<MilitaryRanking>>({});
 
@@ -24,12 +26,12 @@ export default function MilitaryManagement({
       });
 
       if (response.ok) {
-        alert("Classement militaire mis à jour!");
+        showToast("Classement militaire mis à jour!", "success");
         router.refresh();
       }
     } catch (error: unknown) {
       console.error("Erreur lors de la mise à jour:", error);
-      alert("Erreur lors de la mise à jour");
+      showToast("Erreur lors de la mise à jour", "error");
     }
   };
 

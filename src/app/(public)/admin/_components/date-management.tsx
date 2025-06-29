@@ -3,6 +3,7 @@
 import type { GameDate } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "../../_components/toast";
 
 interface DateManagementProps {
   gameDate: GameDate | null;
@@ -10,6 +11,8 @@ interface DateManagementProps {
 
 export default function DateManagement({ gameDate }: DateManagementProps) {
   const router = useRouter();
+  const { showToast } = useToast();
+
   const [newDate, setNewDate] = useState(gameDate?.date || "");
 
   const updateGameDate = async (newDateValue: string) => {
@@ -21,12 +24,12 @@ export default function DateManagement({ gameDate }: DateManagementProps) {
       });
 
       if (response.ok) {
-        alert("Date mise à jour avec succès!");
+        showToast("Date mise à jour avec succès!", "success");
         router.refresh();
       }
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la date:", error);
-      alert("Erreur lors de la mise à jour");
+      showToast("Erreur lors de la mise à jour", "error");
     }
   };
 

@@ -1,8 +1,10 @@
 import "./globals.css";
 
 import { Inter } from "next/font/google";
-import Footer from "./(public)/_components/footer";
-import Header from "./(public)/_components/header";
+
+import { Footer } from "./(public)/_components/footer";
+import { Header } from "./(public)/_components/header";
+import { ToastProvider } from "./(public)/_components/toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,9 +18,11 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gray-50 min-h-screen flex flex-col`}
       >
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ToastProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

@@ -1,15 +1,17 @@
 import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
+
 import type {
   EconomicRanking,
   GameDate,
   MilitaryRanking,
   News,
 } from "@/lib/types";
+
 import type { Metadata } from "next";
 
-import PageHeader from "../_components/page-header";
-import AdminPanel from "./_components/admin-panel";
+import { PageHeader } from "../_components/page-header";
+import { AdminPanel } from "./_components/admin-panel";
 
 export const metadata: Metadata = {
   title: `Admin | ${env.NEXT_PUBLIC_APP_NAME}`,
@@ -77,7 +79,7 @@ async function getAdminData(): Promise<AdminData> {
       news,
       gameDate,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Erreur lors du chargement des données admin:", error);
     return {
       militaryRankings: [],

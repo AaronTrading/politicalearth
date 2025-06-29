@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export function GameDateDisplay() {
+export const GameDateDisplay = () => {
   const [gameDate, setGameDate] = useState<string>("2077");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,4 +32,4 @@ export function GameDateDisplay() {
       </span>
     </div>
   );
-}
+};

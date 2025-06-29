@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+
 import { env } from "../../lib/env";
-import Button from "./_components/button";
+import { Button } from "./_components/button";
 
 export const metadata: Metadata = {
   title: `Serveur Géopolitique | ${env.NEXT_PUBLIC_APP_NAME}`,

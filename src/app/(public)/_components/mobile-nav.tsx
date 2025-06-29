@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/admin", label: "🔧 Admin" },
 ];
 
-export default function MobileNav() {
+export const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -46,4 +46,4 @@ export default function MobileNav() {
       )}
     </div>
   );
-}
+};
