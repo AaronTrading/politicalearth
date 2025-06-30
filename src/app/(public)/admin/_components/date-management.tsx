@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { Button } from "../../_components/button";
-import { useToast } from "../../_components/toast";
+import { useToast } from "../../_components/toast/toast-store";
 
 type DateManagementProps = {
   gameDate: Pick<PrismaGameDate, "id" | "date" | "isActive"> | null;
@@ -15,7 +15,7 @@ type DateManagementProps = {
 export const DateManagement = ({ gameDate }: DateManagementProps) => {
   const router = useRouter();
 
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [newDate, setNewDate] = useState(gameDate?.date || "");
   const [isLoading, setIsLoading] = useState(false);

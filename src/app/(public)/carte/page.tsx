@@ -5,6 +5,8 @@ import { Flag, Globe, Users } from "lucide-react";
 
 import { PageHeader } from "../_components/page-header";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `Carte | ${env.NEXT_PUBLIC_APP_NAME}`,
   description: `Carte du serveur géopolitique ${env.NEXT_PUBLIC_APP_NAME}.`,

@@ -5,7 +5,7 @@ import type { MilitaryRanking as PrismaMilitaryRanking } from "@/generated/prism
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../../_components/button";
-import { useToast } from "../../_components/toast";
+import { useToast } from "../../_components/toast/toast-store";
 
 type MilitaryManagementProps = {
   rankings: Pick<
@@ -17,7 +17,7 @@ type MilitaryManagementProps = {
 export const MilitaryManagement = ({ rankings }: MilitaryManagementProps) => {
   const router = useRouter();
 
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<

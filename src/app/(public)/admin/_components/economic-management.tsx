@@ -5,7 +5,7 @@ import type { EconomicRanking as PrismaEconomicRanking } from "@/generated/prism
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../../_components/button";
-import { useToast } from "../../_components/toast";
+import { useToast } from "../../_components/toast/toast-store";
 
 type EconomicManagementProps = {
   rankings: Pick<
@@ -17,7 +17,7 @@ type EconomicManagementProps = {
 export const EconomicManagement = ({ rankings }: EconomicManagementProps) => {
   const router = useRouter();
 
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<

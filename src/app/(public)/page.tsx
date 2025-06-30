@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Button } from "./_components/button";
 import { FeaturesList } from "./_components/home/features-list";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `Serveur Géopolitique | ${env.NEXT_PUBLIC_APP_NAME}`,
   description: `Le site officiel du serveur géopolitique ${env.NEXT_PUBLIC_APP_NAME}.`,
@@ -57,7 +59,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <FeaturesList  />
+          <FeaturesList />
         </div>
       </section>
     </main>

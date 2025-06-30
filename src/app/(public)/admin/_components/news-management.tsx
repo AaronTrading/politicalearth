@@ -5,7 +5,7 @@ import type { News as PrismaNews } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "../../_components/button";
-import { useToast } from "../../_components/toast";
+import { useToast } from "../../_components/toast/toast-store";
 
 type NewsManagementProps = {
   news: Pick<
@@ -17,7 +17,7 @@ type NewsManagementProps = {
 export const NewsManagement = ({ news }: NewsManagementProps) => {
   const router = useRouter();
 
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<
@@ -94,7 +94,6 @@ export const NewsManagement = ({ news }: NewsManagementProps) => {
       }
 
       toast.success("Actualité créée!");
-      router.refresh();
     } catch (error: unknown) {
       toast.error(
         error instanceof Error

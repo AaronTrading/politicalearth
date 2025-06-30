@@ -13,6 +13,8 @@ import type {
 import { PageHeader } from "../_components/page-header";
 import { AdminPanel } from "./_components/admin-panel";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `Admin | ${env.NEXT_PUBLIC_APP_NAME}`,
 };

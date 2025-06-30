@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils";
 import { PageHeader } from "../_components/page-header";
 import { NewsList } from "./_components/news-list";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: `Actualités | ${env.NEXT_PUBLIC_APP_NAME}`,
   description: `Actualités du serveur géopolitique ${env.NEXT_PUBLIC_APP_NAME}.`,
