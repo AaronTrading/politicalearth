@@ -1,6 +1,7 @@
 import type { News as PrismaNews } from "@/generated/prisma";
+
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
 
 import { handleApiError, NotFoundError } from "@/utils/api/handle-api-error";
 
