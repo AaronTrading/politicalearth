@@ -1,8 +1,31 @@
-import { PrismaClient } from "../src/generated/prisma";
+import { Prisma, PrismaClient } from "../src/generated/prisma";
 
 const prisma = new PrismaClient();
 
-const militaryRankings = [
+const users: Prisma.UserCreateInput[] = [
+  {
+    email: "admin@admin.com",
+    password: "admin",
+    role: "ADMIN",
+  },
+  {
+    email: "admin2@admin.com",
+    password: "admin",
+    role: "ADMIN",
+  },
+  {
+    email: "journalist@journalist.com",
+    password: "journalist",
+    role: "JOURNALIST",
+  },
+  {
+    email: "journalist2@journalist.com",
+    password: "journalist",
+    role: "JOURNALIST",
+  },
+];
+
+const militaryRankings: Prisma.MilitaryRankingCreateInput[] = [
   {
     rank: 1,
     country: "États-Unis",
@@ -405,7 +428,7 @@ const militaryRankings = [
   },
 ];
 
-const economicRankings = [
+const economicRankings: Prisma.EconomicRankingCreateInput[] = [
   {
     rank: 1,
     country: "États-Unis",
@@ -808,7 +831,7 @@ const economicRankings = [
   },
 ];
 
-const newsData = [
+const newsData: Prisma.NewsCreateInput[] = [
   {
     title: "Tension géopolitique en mer de Chine méridionale",
     content:
@@ -863,10 +886,19 @@ async function main() {
   console.log("🌱 Début du seeding de la base de données...");
 
   // Nettoyer les données existantes
+  await prisma.user.deleteMany();
   await prisma.militaryRanking.deleteMany();
   await prisma.economicRanking.deleteMany();
   await prisma.news.deleteMany();
   await prisma.gameDate.deleteMany();
+
+  // Insérer les utilisateurs
+  console.log("👤 Insertion des utilisateurs...");
+  for (const user of users) {
+    await prisma.user.create({
+      data: user,
+    });
+  }
 
   // Insérer les classements militaires
   console.log("📊 Insertion des classements militaires...");
