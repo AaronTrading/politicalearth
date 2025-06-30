@@ -1,12 +1,12 @@
-interface RankingData {
+type RankingData = {
   id: string | number;
   rank: number;
   country: string;
   flag: string;
   [key: string]: string | number;
-}
+};
 
-interface RankingTableProps {
+type RankingTableProps = {
   title: string;
   icon: string;
   data: RankingData[];
@@ -16,7 +16,7 @@ interface RankingTableProps {
     align?: "left" | "center" | "right";
     format?: (value: string | number) => string;
   }>;
-}
+};
 
 export const RankingTable = ({
   title,
@@ -25,8 +25,7 @@ export const RankingTable = ({
   columns,
 }: RankingTableProps) => {
   return (
-    <div className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
-      {/* Header */}
+    <section className="bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
       <div className="bg-gray-50 px-4 py-3 border-b-2 border-gray-300">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
           <span>{icon}</span>
@@ -34,7 +33,6 @@ export const RankingTable = ({
         </h2>
       </div>
 
-      {/* Table */}
       <div className="overflow-auto max-h-[600px]">
         <table className="w-full border-collapse">
           <thead className="sticky top-0 bg-gray-100 z-10">
@@ -91,6 +89,6 @@ export const RankingTable = ({
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   );
 };

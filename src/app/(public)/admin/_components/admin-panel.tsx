@@ -1,25 +1,35 @@
 "use client";
 
 import type {
-  EconomicRanking,
-  GameDate,
-  MilitaryRanking,
-  News,
-} from "@/lib/types";
+  EconomicRanking as PrismaEconomicRanking,
+  GameDate as PrismaGameDate,
+  MilitaryRanking as PrismaMilitaryRanking,
+  News as PrismaNews,
+} from "@/generated/prisma";
+
 import { useState } from "react";
 
-import AdminTabs from "./admin-tabs";
-import DateManagement from "./date-management";
-import EconomicManagement from "./economic-management";
-import MilitaryManagement from "./military-management";
-import NewsManagement from "./news-management";
+import { AdminTabs } from "./admin-tabs";
+import { DateManagement } from "./date-management";
+import { EconomicManagement } from "./economic-management";
+import { MilitaryManagement } from "./military-management";
+import { NewsManagement } from "./news-management";
 
-interface AdminPanelProps {
-  initialMilitaryRankings: MilitaryRanking[];
-  initialEconomicRankings: EconomicRanking[];
-  initialNews: News[];
-  initialGameDate: GameDate | null;
-}
+type AdminPanelProps = {
+  initialMilitaryRankings: Pick<
+    PrismaMilitaryRanking,
+    "id" | "rank" | "country" | "flag" | "power" | "budget" | "forces"
+  >[];
+  initialEconomicRankings: Pick<
+    PrismaEconomicRanking,
+    "id" | "rank" | "country" | "flag" | "gdp" | "growth" | "trade"
+  >[];
+  initialNews: Pick<
+    PrismaNews,
+    "id" | "title" | "content" | "category" | "date" | "imageUrl"
+  >[];
+  initialGameDate: Pick<PrismaGameDate, "id" | "date" | "isActive"> | null;
+};
 
 export const AdminPanel = ({
   initialMilitaryRankings,

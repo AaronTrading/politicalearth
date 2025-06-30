@@ -1,3 +1,4 @@
+import type { MilitaryRanking as PrismaMilitaryRanking } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
@@ -5,12 +6,13 @@ import { handleApiError, NotFoundError } from "@/utils/api/handle-api-error";
 
 export async function GET() {
   try {
-    const rankings = await prisma.militaryRanking.findMany({
-      orderBy: { rank: "asc" },
-    });
+    const rankings: PrismaMilitaryRanking[] =
+      await prisma.militaryRanking.findMany({
+        orderBy: { rank: "asc" },
+      });
 
     if (!rankings) {
-      throw new NotFoundError("No military rankings found");
+      throw new NotFoundError("Rankings not found");
     }
 
     return NextResponse.json(rankings);

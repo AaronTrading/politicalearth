@@ -1,3 +1,4 @@
+import type { News as PrismaNews } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
@@ -5,7 +6,7 @@ import { handleApiError, NotFoundError } from "@/utils/api/handle-api-error";
 
 export async function GET() {
   try {
-    const news = await prisma.news.findMany({
+    const news: PrismaNews[] = await prisma.news.findMany({
       orderBy: { createdAt: "desc" },
     });
 
@@ -21,9 +22,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body: Omit<PrismaNews, "id" | "createdAt" | "updatedAt"> =
+      await request.json();
 
-    const newArticle = await prisma.news.create({
+    const newArticle: PrismaNews = await prisma.news.create({
       data: body,
     });
 

@@ -1,3 +1,4 @@
+import type { GameDate as PrismaGameDate } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 
@@ -9,7 +10,7 @@ import {
 
 export async function GET() {
   try {
-    const gameDate = await prisma.gameDate.findFirst({
+    const gameDate: PrismaGameDate | null = await prisma.gameDate.findFirst({
       where: { isActive: true },
     });
 
@@ -25,36 +26,35 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const body = await request.json();
+    const body: { date: string } = await request.json();
 
     if (!body.date) {
       throw new BadRequestError("Date is required");
     }
 
     // Désactiver toutes les dates existantes
-    const updatedDates = await prisma.gameDate.updateMany({
+    await prisma.gameDate.updateMany({
       data: { isActive: false },
     });
 
-    if (!updatedDates) {
-      throw new NotFoundError("Game dates not found");
-    }
-
-    // Créer ou mettre à jour la nouvelle date active
-    const updatedDate = await prisma.gameDate.upsert({
-      where: { id: 1 },
-      update: {
-        date: body.date,
-        isActive: true,
-      },
-      create: {
-        date: body.date,
-        isActive: true,
-      },
+    // Vérifier si une date avec cette valeur existe déjà
+    const existingDate = await prisma.gameDate.findFirst({
+      where: { date: body.date },
     });
 
-    if (!updatedDate) {
-      throw new NotFoundError("Game date not found");
+    let updatedDate: PrismaGameDate;
+
+    if (existingDate) {
+      // Mettre à jour la date existante pour la rendre active
+      updatedDate = await prisma.gameDate.update({
+        where: { id: existingDate.id },
+        data: { isActive: true },
+      });
+    } else {
+      // Créer une nouvelle date
+      updatedDate = await prisma.gameDate.create({
+        data: { date: body.date, isActive: true },
+      });
     }
 
     return NextResponse.json(updatedDate);

@@ -2,111 +2,153 @@
 
 import {
   createContext,
+  memo,
   ReactNode,
   useCallback,
   useContext,
+  useMemo,
   useState,
 } from "react";
 
 type ToastType = "success" | "error" | "info" | "warning";
 
-interface Toast {
+type Toast = {
   id: string;
   message: string;
   type: ToastType;
-}
+};
 
-interface ToastContextType {
-  showToast: (message: string, type: ToastType) => void;
-}
+type ToastMethods = {
+  success: (message: string) => void;
+  error: (message: string) => void;
+  info: (message: string) => void;
+  warning: (message: string) => void;
+};
+
+type ToastContextType = {
+  toast: ToastMethods;
+};
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export function useToast() {
+export const useToast = () => {
   const context = useContext(ToastContext);
+
   if (!context) {
     throw new Error("useToast must be used within a ToastProvider");
   }
+
   return context;
-}
+};
 
-interface ToastProviderProps {
+const ToastItem = memo(
+  ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) => {
+    const toastStyles = useMemo(() => {
+      const baseStyles =
+        "min-w-80 max-w-md p-4 rounded-lg shadow-lg border-l-4 transform transition-all duration-300 ease-in-out animate-slide-in-right";
+
+      switch (toast.type) {
+        case "success":
+          return `${baseStyles} bg-green-50 border-green-500 text-green-800`;
+        case "error":
+          return `${baseStyles} bg-red-50 border-red-500 text-red-800`;
+        case "info":
+          return `${baseStyles} bg-blue-50 border-blue-500 text-blue-800`;
+        case "warning":
+          return `${baseStyles} bg-yellow-50 border-yellow-500 text-yellow-800`;
+        default:
+          return baseStyles;
+      }
+    }, [toast.type]);
+
+    const icon = useMemo(() => {
+      switch (toast.type) {
+        case "success":
+          return "✅";
+        case "error":
+          return "❌";
+        case "info":
+          return "ℹ️";
+        case "warning":
+          return "⚠️";
+        default:
+          return "";
+      }
+    }, [toast.type]);
+
+    return (
+      <div className={toastStyles}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">{icon}</span>
+            <p className="font-medium">{toast.message}</p>
+          </div>
+          <button
+            onClick={() => onRemove(toast.id)}
+            className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Fermer"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    );
+  }
+);
+
+ToastItem.displayName = "ToastItem";
+
+type ToastProviderProps = {
   children: ReactNode;
-}
+};
 
-export function ToastProvider({ children }: ToastProviderProps) {
+export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = useCallback((message: string, type: ToastType) => {
-    const id = Math.random().toString(36).substr(2, 9);
+  const showToast = useCallback((type: ToastType, message: string) => {
+    const id = crypto.randomUUID(); // Plus performant que Math.random
     const toast = { id, message, type };
 
     setToasts((prev) => [...prev, toast]);
 
     // Auto remove after 4 seconds
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);
+
+    // Cleanup si le composant est démonté
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  // Toast methods object
+  const toast = useMemo(
+    () => ({
+      success: (message: string) => showToast("success", message),
+      error: (message: string) => showToast("error", message),
+      info: (message: string) => showToast("info", message),
+      warning: (message: string) => showToast("warning", message),
+    }),
+    [showToast]
+  );
+
+  const contextValue = useMemo(() => ({ toast }), [toast]);
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
 
-      {/* Toast Container */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={`
-              min-w-80 max-w-md p-4 rounded-lg shadow-lg border-l-4 transform transition-all duration-300 ease-in-out
-              ${
-                toast.type === "success"
-                  ? "bg-green-50 border-green-500 text-green-800"
-                  : ""
-              }
-              ${
-                toast.type === "error"
-                  ? "bg-red-50 border-red-500 text-red-800"
-                  : ""
-              }
-              ${
-                toast.type === "info"
-                  ? "bg-blue-50 border-blue-500 text-blue-800"
-                  : ""
-              }
-              ${
-                toast.type === "warning"
-                  ? "bg-yellow-50 border-yellow-500 text-yellow-800"
-                  : ""
-              }
-              animate-slide-in-right
-            `}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">
-                  {toast.type === "success" && "✅"}
-                  {toast.type === "error" && "❌"}
-                  {toast.type === "info" && "ℹ️"}
-                  {toast.type === "warning" && "⚠️"}
-                </span>
-                <p className="font-medium">{toast.message}</p>
-              </div>
-              <button
-                onClick={() => removeToast(toast.id)}
-                className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Toast Container - Rendu conditionnel */}
+      {toasts.length > 0 && (
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {toasts.map((toast) => (
+            <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
+          ))}
+        </div>
+      )}
     </ToastContext.Provider>
   );
-}
+};

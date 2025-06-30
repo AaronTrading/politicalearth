@@ -1,3 +1,4 @@
+import type { EconomicRanking as PrismaEconomicRanking } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
@@ -13,20 +14,22 @@ export async function PUT(
 ) {
   try {
     const { id } = await context.params;
-    const body = await request.json();
+    const body: Partial<
+      Pick<
+        PrismaEconomicRanking,
+        "rank" | "country" | "flag" | "gdp" | "growth" | "trade"
+      >
+    > = await request.json();
 
     if (!id) {
       throw new BadRequestError("Invalid ID");
     }
 
-    if (!body.rank) {
-      throw new BadRequestError("Rank is required");
-    }
-
-    const updatedRanking = await prisma.economicRanking.update({
-      where: { id: parseInt(id) },
-      data: body,
-    });
+    const updatedRanking: PrismaEconomicRanking =
+      await prisma.economicRanking.update({
+        where: { id: parseInt(id) },
+        data: body,
+      });
 
     if (!updatedRanking) {
       throw new NotFoundError("Economic ranking not found");

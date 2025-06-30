@@ -1,3 +1,4 @@
+import type { News as PrismaNews } from "@/generated/prisma";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
@@ -13,7 +14,9 @@ export async function PUT(
 ) {
   try {
     const { id } = await context.params;
-    const body = await request.json();
+    const body: Partial<
+      Pick<PrismaNews, "title" | "content" | "category" | "date" | "imageUrl">
+    > = await request.json();
 
     if (!id) {
       throw new BadRequestError("Invalid ID");
@@ -27,7 +30,7 @@ export async function PUT(
       throw new BadRequestError("Content is required");
     }
 
-    const updatedNews = await prisma.news.update({
+    const updatedNews: PrismaNews = await prisma.news.update({
       where: { id: parseInt(id) },
       data: body,
     });

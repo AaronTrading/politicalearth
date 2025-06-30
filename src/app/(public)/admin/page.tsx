@@ -1,14 +1,14 @@
 import { env } from "@/lib/env";
+import type { Metadata } from "next";
+
 import { prisma } from "@/lib/prisma";
 
 import type {
-  EconomicRanking,
-  GameDate,
-  MilitaryRanking,
-  News,
-} from "@/lib/types";
-
-import type { Metadata } from "next";
+  EconomicRanking as PrismaEconomicRanking,
+  GameDate as PrismaGameDate,
+  MilitaryRanking as PrismaMilitaryRanking,
+  News as PrismaNews,
+} from "@/generated/prisma";
 
 import { PageHeader } from "../_components/page-header";
 import { AdminPanel } from "./_components/admin-panel";
@@ -17,12 +17,21 @@ export const metadata: Metadata = {
   title: `Admin | ${env.NEXT_PUBLIC_APP_NAME}`,
 };
 
-interface AdminData {
-  militaryRankings: MilitaryRanking[];
-  economicRankings: EconomicRanking[];
-  news: News[];
-  gameDate: GameDate | null;
-}
+type AdminData = {
+  militaryRankings: Pick<
+    PrismaMilitaryRanking,
+    "id" | "rank" | "country" | "flag" | "power" | "budget" | "forces"
+  >[];
+  economicRankings: Pick<
+    PrismaEconomicRanking,
+    "id" | "rank" | "country" | "flag" | "gdp" | "growth" | "trade"
+  >[];
+  news: Pick<
+    PrismaNews,
+    "id" | "title" | "content" | "category" | "date" | "imageUrl"
+  >[];
+  gameDate: Pick<PrismaGameDate, "id" | "date" | "isActive"> | null;
+};
 
 async function getAdminData(): Promise<AdminData> {
   try {
@@ -80,7 +89,12 @@ async function getAdminData(): Promise<AdminData> {
       gameDate,
     };
   } catch (error: unknown) {
-    console.error("Erreur lors du chargement des données admin:", error);
+    console.error(
+      error instanceof Error
+        ? error.message
+        : "Erreur lors du chargement des données admin",
+      error
+    );
     return {
       militaryRankings: [],
       economicRankings: [],

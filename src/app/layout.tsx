@@ -1,5 +1,7 @@
 import "./globals.css";
 
+import type { ReactNode } from "react";
+
 import { Inter } from "next/font/google";
 
 import { Footer } from "./(public)/_components/footer";
@@ -11,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
@@ -20,7 +22,7 @@ export default function RootLayout({
       >
         <ToastProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <div className="flex-1">{children}</div>
           <Footer />
         </ToastProvider>
       </body>

@@ -1,23 +1,47 @@
 "use client";
 
-import type { MilitaryRanking } from "@/lib/types";
+import type { MilitaryRanking as PrismaMilitaryRanking } from "@/generated/prisma";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "../../_components/button";
 import { useToast } from "../../_components/toast";
 
-interface MilitaryManagementProps {
-  rankings: MilitaryRanking[];
-}
+type MilitaryManagementProps = {
+  rankings: Pick<
+    PrismaMilitaryRanking,
+    "id" | "rank" | "country" | "flag" | "power" | "budget" | "forces"
+  >[];
+};
 
-export default function MilitaryManagement({
-  rankings,
-}: MilitaryManagementProps) {
+export const MilitaryManagement = ({ rankings }: MilitaryManagementProps) => {
   const router = useRouter();
-  const { showToast } = useToast();
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<Partial<MilitaryRanking>>({});
 
-  const updateRanking = async (id: number, data: Partial<MilitaryRanking>) => {
+  const { toast } = useToast();
+
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editData, setEditData] = useState<
+    Partial<
+      Pick<
+        PrismaMilitaryRanking,
+        "id" | "rank" | "country" | "flag" | "power" | "budget" | "forces"
+      >
+    >
+  >({});
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateRanking = async (
+    id: number,
+    data: Partial<
+      Pick<
+        PrismaMilitaryRanking,
+        "id" | "rank" | "country" | "flag" | "power" | "budget" | "forces"
+      >
+    >
+  ) => {
+    setIsLoading(true);
+
     try {
       const response = await fetch(`/api/military-rankings/${id}`, {
         method: "PUT",
@@ -25,17 +49,31 @@ export default function MilitaryManagement({
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        showToast("Classement militaire mis à jour!", "success");
-        router.refresh();
+      if (!response.ok) {
+        throw new Error(
+          "Erreur lors de la mise à jour du classement militaire"
+        );
       }
+
+      toast.success("Classement militaire mis à jour!");
+      router.refresh();
     } catch (error: unknown) {
-      console.error("Erreur lors de la mise à jour:", error);
-      showToast("Erreur lors de la mise à jour", "error");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la mise à jour du classement militaire"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleEdit = (ranking: MilitaryRanking) => {
+  const handleEdit = (
+    ranking: Pick<
+      PrismaMilitaryRanking,
+      "id" | "rank" | "country" | "flag" | "power" | "budget" | "forces"
+    >
+  ) => {
     setEditingId(ranking.id);
     setEditData(ranking);
   };
@@ -175,29 +213,31 @@ export default function MilitaryManagement({
                 <td className="px-4 py-3 border border-gray-300 text-sm">
                   {editingId === ranking.id ? (
                     <div className="flex gap-2">
-                      <button
-                        type="button"
+                      <Button
                         onClick={handleSave}
-                        className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-colors"
+                        loading={isLoading}
+                        variant="success"
+                        size="sm"
                       >
                         💾 Sauver
-                      </button>
-                      <button
-                        type="button"
+                      </Button>
+                      <Button
                         onClick={handleCancel}
-                        className="bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition-colors"
+                        variant="secondary"
+                        size="sm"
+                        disabled={isLoading}
                       >
                         ❌ Annuler
-                      </button>
+                      </Button>
                     </div>
                   ) : (
-                    <button
-                      type="button"
+                    <Button
                       onClick={() => handleEdit(ranking)}
-                      className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-colors"
+                      variant="primary"
+                      size="sm"
                     >
                       ✏️ Éditer
-                    </button>
+                    </Button>
                   )}
                 </td>
               </tr>
@@ -207,4 +247,4 @@ export default function MilitaryManagement({
       </div>
     </div>
   );
-}
+};

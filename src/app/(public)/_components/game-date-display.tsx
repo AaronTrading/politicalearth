@@ -3,20 +3,32 @@
 import { useEffect, useState } from "react";
 
 export const GameDateDisplay = () => {
-  const [gameDate, setGameDate] = useState<string>("2077");
+  const currentYear = new Date().getFullYear();
+
+  const [gameDate, setGameDate] = useState<string>(currentYear.toString());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchGameDate = async () => {
       try {
         const response = await fetch("/api/game-date");
+
+        if (!response.ok) {
+          throw new Error("Erreur lors du chargement de la date");
+        }
+
         const data = await response.json();
+
         if (data?.date) {
           setGameDate(data.date);
         }
-      } catch (error) {
-        console.error("Erreur lors du chargement de la date:", error);
-        // Keep default date on error
+      } catch (error: unknown) {
+        console.error(
+          error instanceof Error
+            ? error.message
+            : "Erreur lors du chargement de la date",
+          error
+        );
       } finally {
         setIsLoading(false);
       }

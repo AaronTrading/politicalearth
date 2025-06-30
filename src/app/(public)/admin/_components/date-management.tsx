@@ -1,21 +1,28 @@
 "use client";
 
-import type { GameDate } from "@/lib/types";
+import type { GameDate as PrismaGameDate } from "@/generated/prisma";
+
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
+
+import { Button } from "../../_components/button";
 import { useToast } from "../../_components/toast";
 
-interface DateManagementProps {
-  gameDate: GameDate | null;
-}
+type DateManagementProps = {
+  gameDate: Pick<PrismaGameDate, "id" | "date" | "isActive"> | null;
+};
 
-export default function DateManagement({ gameDate }: DateManagementProps) {
+export const DateManagement = ({ gameDate }: DateManagementProps) => {
   const router = useRouter();
-  const { showToast } = useToast();
+
+  const { toast } = useToast();
 
   const [newDate, setNewDate] = useState(gameDate?.date || "");
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateGameDate = async (newDateValue: string) => {
+    setIsLoading(true);
+
     try {
       const response = await fetch("/api/game-date", {
         method: "PUT",
@@ -23,18 +30,26 @@ export default function DateManagement({ gameDate }: DateManagementProps) {
         body: JSON.stringify({ date: newDateValue }),
       });
 
-      if (response.ok) {
-        showToast("Date mise à jour avec succès!", "success");
-        router.refresh();
+      if (!response.ok) {
+        throw new Error("Erreur lors de la mise à jour de la date");
       }
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de la date:", error);
-      showToast("Erreur lors de la mise à jour", "error");
+
+      toast.success("Date mise à jour avec succès!");
+      return router.refresh();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la mise à jour de la date"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
     if (newDate.trim()) {
       updateGameDate(newDate);
     }
@@ -87,13 +102,10 @@ export default function DateManagement({ gameDate }: DateManagementProps) {
           </p>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-        >
+        <Button type="submit" loading={isLoading} size="lg">
           Mettre à jour la date
-        </button>
+        </Button>
       </form>
     </div>
   );
-}
+};

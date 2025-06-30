@@ -1,8 +1,16 @@
+import type {
+  EconomicRanking as PrismaEconomicRanking,
+  GameDate as PrismaGameDate,
+  MilitaryRanking as PrismaMilitaryRanking,
+} from "@/generated/prisma";
 import { env } from "@/lib/env";
 import type { Metadata } from "next";
+
 import { prisma } from "../../../lib/prisma";
+
 import { PageHeader } from "../_components/page-header";
 import { RankingTable } from "./_components/ranking-table";
+import { StatsList } from "./_components/stats-list";
 
 export const metadata: Metadata = {
   title: `Classement | ${env.NEXT_PUBLIC_APP_NAME}`,
@@ -14,7 +22,11 @@ export const metadata: Metadata = {
 
 export default async function ClassementPage() {
   // Récupération des données depuis la base
-  const [militaryRankings, economicRankings, gameDate] = await Promise.all([
+  const [militaryRankings, economicRankings, gameDate]: [
+    PrismaMilitaryRanking[],
+    PrismaEconomicRanking[],
+    PrismaGameDate | null
+  ] = await Promise.all([
     prisma.militaryRanking.findMany({
       orderBy: { rank: "asc" },
     }),
@@ -88,7 +100,7 @@ export default async function ClassementPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <main className="min-h-screen">
       <PageHeader
         title="Classements Mondiaux"
         subtitle={`Puissance militaire et économique des nations en ${
@@ -98,7 +110,6 @@ export default async function ClassementPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Economic Rankings */}
           <div className="animate-slide-up">
             <RankingTable
               title="Classement Économique"
@@ -108,7 +119,6 @@ export default async function ClassementPage() {
             />
           </div>
 
-          {/* Military Rankings */}
           <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <RankingTable
               title="Classement Militaire"
@@ -119,48 +129,11 @@ export default async function ClassementPage() {
           </div>
         </div>
 
-        {/* Summary Stats */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in">
-          <div className="bg-white rounded-lg p-6 shadow border border-gray-200">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">🌍</span>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Pays Répertoriés
-              </h3>
-            </div>
-            <p className="text-3xl font-bold text-blue-600">
-              {economicRankings.length}
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 shadow border border-gray-200">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">💰</span>
-              <h3 className="text-lg font-semibold text-gray-900">
-                PIB Total Mondial
-              </h3>
-            </div>
-            <p className="text-3xl font-bold text-blue-600">
-              {economicRankings
-                .reduce((sum, country) => sum + parseFloat(country.gdp), 0)
-                .toFixed(1)}
-              T $
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 shadow border border-gray-200">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">⚔️</span>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Personnel Militaire
-              </h3>
-            </div>
-            <p className="text-3xl font-bold text-blue-600">
-              {militaryRankings.length} pays
-            </p>
-          </div>
-        </div>
+        <StatsList
+          economicRankings={economicRankings}
+          militaryRankings={militaryRankings}
+        />
       </div>
-    </div>
+    </main>
   );
 }

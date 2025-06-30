@@ -1,8 +1,11 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
 import Link from "next/link";
+
 import { useState } from "react";
+
+import { Button } from "@/app/(public)/_components/button";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -17,19 +20,21 @@ export const MobileNav = () => {
 
   return (
     <div className="md:hidden">
-      <button
+      <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 rounded-md"
+        variant="ghost"
+        size="sm"
+        className="p-2"
         aria-label="Toggle navigation menu"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
           <nav className="px-6 py-4">
             <ul className="space-y-2">
-              {navLinks.map((link) => (
+              {navLinks.map((link: { href: string; label: string }) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

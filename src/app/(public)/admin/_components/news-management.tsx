@@ -1,21 +1,39 @@
 "use client";
 
-import type { News } from "@/lib/types";
+import type { News as PrismaNews } from "@/generated/prisma";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "../../_components/button";
 import { useToast } from "../../_components/toast";
 
-interface NewsManagementProps {
-  news: News[];
-}
+type NewsManagementProps = {
+  news: Pick<
+    PrismaNews,
+    "id" | "title" | "content" | "category" | "date" | "imageUrl"
+  >[];
+};
 
-export default function NewsManagement({ news }: NewsManagementProps) {
+export const NewsManagement = ({ news }: NewsManagementProps) => {
   const router = useRouter();
-  const { showToast } = useToast();
+
+  const { toast } = useToast();
+
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<Partial<News>>({});
+  const [editData, setEditData] = useState<
+    Partial<
+      Pick<
+        PrismaNews,
+        "id" | "title" | "content" | "category" | "date" | "imageUrl"
+      >
+    >
+  >({});
   const [isCreating, setIsCreating] = useState(false);
-  const [newArticle, setNewArticle] = useState<Omit<News, "id">>({
+  const [isCreatingLoading, setIsCreatingLoading] = useState(false);
+  const [isEditingLoading, setIsEditingLoading] = useState(false);
+  const [newArticle, setNewArticle] = useState<
+    Pick<PrismaNews, "title" | "content" | "category" | "date" | "imageUrl">
+  >({
     title: "",
     content: "",
     category: "",
@@ -23,7 +41,16 @@ export default function NewsManagement({ news }: NewsManagementProps) {
     imageUrl: "",
   });
 
-  const updateNews = async (id: number, data: Partial<News>) => {
+  const updateNews = async (
+    id: number,
+    data: Partial<
+      Pick<
+        PrismaNews,
+        "id" | "title" | "content" | "category" | "date" | "imageUrl"
+      >
+    >
+  ) => {
+    setIsEditingLoading(true);
     try {
       const response = await fetch(`/api/news/${id}`, {
         method: "PUT",
@@ -31,17 +58,30 @@ export default function NewsManagement({ news }: NewsManagementProps) {
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        showToast("Actualité mise à jour!", "success");
-        router.refresh();
+      if (!response.ok) {
+        throw new Error("Erreur lors de la mise à jour de l'actualité");
       }
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour:", error);
-      showToast("Erreur lors de la mise à jour", "error");
+
+      toast.success("Actualité mise à jour!");
+      router.refresh();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la mise à jour de l'actualité"
+      );
+    } finally {
+      setIsEditingLoading(false);
     }
   };
 
-  const createNews = async (data: Omit<News, "id">) => {
+  const createNews = async (
+    data: Pick<
+      PrismaNews,
+      "title" | "content" | "category" | "date" | "imageUrl"
+    >
+  ) => {
+    setIsCreatingLoading(true);
     try {
       const response = await fetch("/api/news", {
         method: "POST",
@@ -49,17 +89,29 @@ export default function NewsManagement({ news }: NewsManagementProps) {
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        showToast("Actualité créée!", "success");
-        router.refresh();
+      if (!response.ok) {
+        throw new Error("Erreur lors de la création de l'actualité");
       }
-    } catch (error) {
-      console.error("Erreur lors de la création:", error);
-      showToast("Erreur lors de la création", "error");
+
+      toast.success("Actualité créée!");
+      router.refresh();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la création de l'actualité"
+      );
+    } finally {
+      setIsCreatingLoading(false);
     }
   };
 
-  const handleEdit = (article: News) => {
+  const handleEdit = (
+    article: Pick<
+      PrismaNews,
+      "id" | "title" | "content" | "category" | "date" | "imageUrl"
+    >
+  ) => {
     setEditingId(article.id);
     setEditData(article);
   };
@@ -114,14 +166,14 @@ export default function NewsManagement({ news }: NewsManagementProps) {
           <span>📰</span>
           Gestion des Actualités
         </h2>
-        <button
-          type="button"
+        <Button
           onClick={() => setIsCreating(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2"
+          variant="success"
+          className="flex items-center gap-2"
         >
           <span>➕</span>
           Créer une actualité
-        </button>
+        </Button>
       </div>
 
       {isCreating && (
@@ -197,20 +249,20 @@ export default function NewsManagement({ news }: NewsManagementProps) {
             />
           </div>
           <div className="flex gap-2">
-            <button
-              type="button"
+            <Button
               onClick={handleCreate}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              loading={isCreatingLoading}
+              variant="success"
             >
               💾 Créer
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
               onClick={handleCancelCreate}
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              variant="secondary"
+              disabled={isCreatingLoading}
             >
               ❌ Annuler
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -291,20 +343,20 @@ export default function NewsManagement({ news }: NewsManagementProps) {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <button
-                    type="button"
+                  <Button
                     onClick={handleSave}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                    loading={isEditingLoading}
+                    variant="success"
                   >
                     💾 Sauver
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
                     onClick={handleCancel}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                    variant="secondary"
+                    disabled={isEditingLoading}
                   >
                     ❌ Annuler
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -321,13 +373,13 @@ export default function NewsManagement({ news }: NewsManagementProps) {
                       <span>{article.date}</span>
                     </div>
                   </div>
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => handleEdit(article)}
-                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors"
+                    variant="primary"
+                    size="sm"
                   >
                     ✏️ Éditer
-                  </button>
+                  </Button>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
                   {article.content}
@@ -349,4 +401,4 @@ export default function NewsManagement({ news }: NewsManagementProps) {
       </div>
     </div>
   );
-}
+};

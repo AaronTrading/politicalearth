@@ -1,6 +1,7 @@
 import { env } from "@/lib/env";
-import { Flag, Globe, Users } from "lucide-react";
 import type { Metadata } from "next";
+
+import { Flag, Globe, Users } from "lucide-react";
 
 import { PageHeader } from "../_components/page-header";
 
@@ -14,39 +15,30 @@ export const metadata: Metadata = {
 
 export default function CartePage() {
   return (
-    <div className="min-h-screen">
+    <main className="min-h-screen">
       <PageHeader
         title="Carte du Monde"
         subtitle="Explorez la géopolitique mondiale en temps réel"
       >
-        {/* Stats in header */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow border border-gray-200">
             <Users className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-gray-900">
-              200
-            </span>
+            <span className="font-semibold text-gray-900">200</span>
             <span className="text-gray-600 text-sm">Joueurs</span>
           </div>
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow border border-gray-200">
             <Flag className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-gray-900">
-              100
-            </span>
+            <span className="font-semibold text-gray-900">100</span>
             <span className="text-gray-600 text-sm">Pays</span>
           </div>
         </div>
       </PageHeader>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Map Container */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden animate-fade-in">
           <div className="h-[600px] bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center">
             <div className="text-center text-gray-500">
-              <Globe
-                size={64}
-                className="mx-auto mb-4 text-blue-400"
-              />
+              <Globe size={64} className="mx-auto mb-4 text-blue-400" />
               <h3 className="text-2xl font-semibold text-gray-700 mb-2">
                 Carte Interactive
               </h3>
@@ -60,7 +52,6 @@ export default function CartePage() {
           </div>
         </div>
 
-        {/* Map Controls */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-lg p-6 shadow border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -81,21 +72,15 @@ export default function CartePage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-green-500 rounded"></div>
-                <span className="text-sm text-gray-600">
-                  Pays alliés
-                </span>
+                <span className="text-sm text-gray-600">Pays alliés</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-red-500 rounded"></div>
-                <span className="text-sm text-gray-600">
-                  Pays hostiles
-                </span>
+                <span className="text-sm text-gray-600">Pays hostiles</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-gray-400 rounded"></div>
-                <span className="text-sm text-gray-600">
-                  Pays neutres
-                </span>
+                <span className="text-sm text-gray-600">Pays neutres</span>
               </div>
             </div>
           </div>
@@ -111,6 +96,6 @@ export default function CartePage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

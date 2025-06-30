@@ -1,8 +1,10 @@
-interface PageHeaderProps {
+import type { ReactNode } from "react";
+
+type PageHeaderProps = {
   title: string;
   subtitle?: string;
-  children?: React.ReactNode;
-}
+  children?: ReactNode;
+};
 
 export const PageHeader = ({ title, subtitle, children }: PageHeaderProps) => {
   return (
