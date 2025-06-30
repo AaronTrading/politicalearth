@@ -1,6 +1,7 @@
 import type { GameDate as PrismaGameDate } from "@/generated/prisma";
+
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
 
 import {
   BadRequestError,

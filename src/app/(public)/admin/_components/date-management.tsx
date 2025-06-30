@@ -35,7 +35,7 @@ export const DateManagement = ({ gameDate }: DateManagementProps) => {
       }
 
       toast.success("Date mise à jour avec succès!");
-      return router.refresh();
+      router.refresh();
     } catch (error: unknown) {
       toast.error(
         error instanceof Error
@@ -92,7 +92,7 @@ export const DateManagement = ({ gameDate }: DateManagementProps) => {
             type="text"
             id="gameDate"
             value={newDate}
-            onChange={(e) => setNewDate(e.target.value)}
+            onChange={(event) => setNewDate(event.target.value)}
             placeholder="Ex: 15 Janvier 2157"
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-gray-900"
           />

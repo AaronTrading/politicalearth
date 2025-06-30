@@ -1,6 +1,9 @@
 import Link from "next/link";
+
 import { GameDateDisplay } from "./game-date-display";
 import { MobileNav } from "./mobile-nav";
+
+import { prisma } from "@/lib/prisma";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -10,12 +13,20 @@ const navLinks = [
   { href: "/admin", label: "🔧 Admin" },
 ];
 
-export const Header = () => {
+export const Header = async () => {
+  const gameDate = await prisma.gameDate.findFirst({
+    where: {
+      isActive: true,
+    },
+    select: {
+      date: true,
+    },
+  });
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b-4 border-gray-300 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo and Brand */}
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">PE</span>
@@ -28,7 +39,6 @@ export const Header = () => {
             </Link>
           </div>
 
-          {/* Navigation */}
           <nav
             className="hidden md:block"
             role="navigation"
@@ -48,9 +58,8 @@ export const Header = () => {
             </ul>
           </nav>
 
-          {/* Game Date & Mobile Nav */}
           <div className="flex items-center gap-4">
-            <GameDateDisplay />
+            <GameDateDisplay gameDate={gameDate} />
             <MobileNav />
           </div>
         </div>
