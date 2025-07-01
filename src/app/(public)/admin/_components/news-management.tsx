@@ -31,6 +31,7 @@ export const NewsManagement = ({ news }: NewsManagementProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingLoading, setIsCreatingLoading] = useState(false);
   const [isEditingLoading, setIsEditingLoading] = useState(false);
+  const [isDeletingLoading, setIsDeletingLoading] = useState(false);
   const [newArticle, setNewArticle] = useState<
     Pick<PrismaNews, "title" | "content" | "category" | "date" | "imageUrl">
   >({
@@ -105,6 +106,30 @@ export const NewsManagement = ({ news }: NewsManagementProps) => {
     }
   };
 
+  const deleteNews = async (id: number) => {
+    setIsDeletingLoading(true);
+    try {
+      const response = await fetch(`/api/news/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression de l'actualité");
+      }
+
+      toast.success("Actualité supprimée!");
+      router.refresh();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la suppression de l'actualité"
+      );
+    } finally {
+      setIsDeletingLoading(false);
+    }
+  };
+
   const handleEdit = (
     article: Pick<
       PrismaNews,
@@ -156,6 +181,12 @@ export const NewsManagement = ({ news }: NewsManagementProps) => {
       date: "",
       imageUrl: "",
     });
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Êtes-vous sûr de vouloir supprimer cette actualité ?")) {
+      deleteNews(id);
+    }
   };
 
   return (
@@ -372,13 +403,23 @@ export const NewsManagement = ({ news }: NewsManagementProps) => {
                       <span>{article.date}</span>
                     </div>
                   </div>
-                  <Button
-                    onClick={() => handleEdit(article)}
-                    variant="primary"
-                    size="sm"
-                  >
-                    ✏️ Éditer
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleEdit(article)}
+                      variant="primary"
+                      size="sm"
+                    >
+                      ✏️ Éditer
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(article.id)}
+                      variant="danger"
+                      size="sm"
+                      loading={isDeletingLoading}
+                    >
+                      🗑️ Supprimer
+                    </Button>
+                  </div>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
                   {article.content}

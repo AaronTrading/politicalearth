@@ -29,6 +29,7 @@ export const EconomicManagement = ({ rankings }: EconomicManagementProps) => {
     >
   >({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeletingLoading, setIsDeletingLoading] = useState(false);
 
   const updateRanking = async (
     id: number,
@@ -67,6 +68,32 @@ export const EconomicManagement = ({ rankings }: EconomicManagementProps) => {
     }
   };
 
+  const deleteRanking = async (id: number) => {
+    setIsDeletingLoading(true);
+    try {
+      const response = await fetch(`/api/economic-rankings/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          "Erreur lors de la suppression du classement économique"
+        );
+      }
+
+      toast.success("Classement économique supprimé!");
+      router.refresh();
+    } catch (error: unknown) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la suppression du classement économique"
+      );
+    } finally {
+      setIsDeletingLoading(false);
+    }
+  };
+
   const handleEdit = (
     ranking: Pick<
       PrismaEconomicRanking,
@@ -88,6 +115,14 @@ export const EconomicManagement = ({ rankings }: EconomicManagementProps) => {
   const handleCancel = () => {
     setEditingId(null);
     setEditData({});
+  };
+
+  const handleDelete = (id: number) => {
+    if (
+      confirm("Êtes-vous sûr de vouloir supprimer ce classement économique ?")
+    ) {
+      deleteRanking(id);
+    }
   };
 
   return (
@@ -226,13 +261,23 @@ export const EconomicManagement = ({ rankings }: EconomicManagementProps) => {
                       </Button>
                     </div>
                   ) : (
-                    <Button
-                      onClick={() => handleEdit(ranking)}
-                      variant="primary"
-                      size="sm"
-                    >
-                      ✏️ Éditer
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleEdit(ranking)}
+                        variant="primary"
+                        size="sm"
+                      >
+                        ✏️ Éditer
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(ranking.id)}
+                        variant="danger"
+                        size="sm"
+                        loading={isDeletingLoading}
+                      >
+                        🗑️ Supprimer
+                      </Button>
+                    </div>
                   )}
                 </td>
               </tr>

@@ -1,13 +1,10 @@
 import type { GameDate as PrismaGameDate } from "@/generated/prisma";
 
 import { prisma } from "@/lib/prisma";
+import { gameDateUpdateSchema } from "@/lib/validation";
 import { NextResponse } from "next/server";
 
-import {
-  BadRequestError,
-  handleApiError,
-  NotFoundError,
-} from "@/utils/api/handle-api-error";
+import { handleApiError, NotFoundError } from "@/utils/api/handle-api-error";
 
 export async function GET() {
   try {
@@ -27,11 +24,8 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const body: { date: string } = await request.json();
-
-    if (!body.date) {
-      throw new BadRequestError("Date is required");
-    }
+    const body = await request.json();
+    const { date } = gameDateUpdateSchema.parse(body);
 
     // Désactiver toutes les dates existantes
     await prisma.gameDate.updateMany({
@@ -40,7 +34,7 @@ export async function PUT(request: Request) {
 
     // Vérifier si une date avec cette valeur existe déjà
     const existingDate = await prisma.gameDate.findFirst({
-      where: { date: body.date },
+      where: { date },
     });
 
     let updatedDate: PrismaGameDate;
@@ -54,7 +48,7 @@ export async function PUT(request: Request) {
     } else {
       // Créer une nouvelle date
       updatedDate = await prisma.gameDate.create({
-        data: { date: body.date, isActive: true },
+        data: { date, isActive: true },
       });
     }
 

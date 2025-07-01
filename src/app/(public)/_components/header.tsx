@@ -1,9 +1,6 @@
 import Link from "next/link";
 
-import { GameDateDisplay } from "./game-date-display";
 import { MobileNav } from "./mobile-nav";
-
-import { prisma } from "@/lib/prisma";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -14,15 +11,6 @@ const navLinks = [
 ];
 
 export const Header = async () => {
-  const gameDate = await prisma.gameDate.findFirst({
-    where: {
-      isActive: true,
-    },
-    select: {
-      date: true,
-    },
-  });
-
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b-4 border-gray-300 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4">
@@ -59,7 +47,6 @@ export const Header = async () => {
           </nav>
 
           <div className="flex items-center gap-4">
-            <GameDateDisplay gameDate={gameDate} />
             <MobileNav />
           </div>
         </div>
@@ -67,3 +54,5 @@ export const Header = async () => {
     </header>
   );
 };
+
+// <GameDateDisplay gameDate={gameDate} />

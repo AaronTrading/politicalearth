@@ -1,6 +1,7 @@
 import type { News as PrismaNews } from "@/generated/prisma";
 
 import { prisma } from "@/lib/prisma";
+import { newsCreateSchema } from "@/lib/validation";
 import { NextResponse } from "next/server";
 
 import { handleApiError, NotFoundError } from "@/utils/api/handle-api-error";
@@ -23,11 +24,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body: Omit<PrismaNews, "id" | "createdAt" | "updatedAt"> =
-      await request.json();
+    const body = await request.json();
+    const validatedData = newsCreateSchema.parse(body);
 
     const newArticle: PrismaNews = await prisma.news.create({
-      data: body,
+      data: validatedData,
     });
 
     if (!newArticle) {
