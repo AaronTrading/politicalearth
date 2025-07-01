@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 
 import { Inter } from "next/font/google";
 
-import { prisma } from "@/lib/prisma";
 import { Footer } from "./(public)/_components/footer";
 import { Header } from "./(public)/_components/header";
 import { ToastContainer } from "./(public)/_components/toast/toast-container";
@@ -16,8 +15,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-
-
   return (
     <html lang="fr" suppressHydrationWarning>
       <body

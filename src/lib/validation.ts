@@ -23,7 +23,15 @@ export const newsCreateSchema = z.object({
     .string()
     .min(1, "Date is required")
     .max(50, "Date must be less than 50 characters"),
-  imageUrl: z.string().url("Invalid URL format").optional().or(z.literal("")),
+  imageUrl: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val === "" || z.string().url().safeParse(val).success,
+      {
+        message: "Invalid URL format",
+      }
+    ),
 });
 
 export const newsUpdateSchema = z.object({
@@ -47,7 +55,15 @@ export const newsUpdateSchema = z.object({
     .min(1, "Date is required")
     .max(50, "Date must be less than 50 characters")
     .optional(),
-  imageUrl: z.string().url("Invalid URL format").optional().or(z.literal("")),
+  imageUrl: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val === "" || z.string().url().safeParse(val).success,
+      {
+        message: "Invalid URL format",
+      }
+    ),
 });
 
 // Schéma pour les classements militaires
